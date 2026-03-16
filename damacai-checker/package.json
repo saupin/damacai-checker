@@ -1,0 +1,9 @@
+{
+  "name": "damacai-4d-checker",
+  "version": "1.0.0",
+  "description": "Damacai 4D First Prize Checker",
+  "scripts": {
+    "dev": "vercel dev",
+    "deploy": "vercel --prod"
+  }
+}

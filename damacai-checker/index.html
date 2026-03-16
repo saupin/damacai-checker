@@ -1,0 +1,174 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Damacai 4D Checker</title>
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body {
+            font-family: system-ui, -apple-system, sans-serif;
+            background: linear-gradient(135deg, #1e3c72 0%, #2a5298 100%);
+            min-height: 100vh;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            padding: 20px;
+        }
+        .container {
+            background: white;
+            border-radius: 16px;
+            padding: 30px;
+            max-width: 450px;
+            width: 100%;
+            box-shadow: 0 20px 60px rgba(0,0,0,0.3);
+        }
+        h1 {
+            color: #1e3c72;
+            text-align: center;
+            margin-bottom: 5px;
+        }
+        .subtitle {
+            color: #666;
+            text-align: center;
+            font-size: 0.9rem;
+            margin-bottom: 25px;
+        }
+        input[type="text"] {
+            width: 100%;
+            padding: 15px;
+            font-size: 1.8rem;
+            text-align: center;
+            border: 2px solid #ddd;
+            border-radius: 8px;
+            letter-spacing: 8px;
+            margin-bottom: 15px;
+        }
+        input[type="text"]:focus {
+            outline: none;
+            border-color: #2a5298;
+        }
+        button {
+            width: 100%;
+            padding: 15px;
+            background: #2a5298;
+            color: white;
+            border: none;
+            border-radius: 8px;
+            font-size: 1.1rem;
+            cursor: pointer;
+        }
+        button:hover { background: #1e3c72; }
+        button:disabled { background: #999; cursor: not-allowed; }
+        .result {
+            margin-top: 20px;
+            padding: 20px;
+            border-radius: 8px;
+            display: none;
+        }
+        .result.show { display: block; }
+        .result.found { background: #d4edda; color: #155724; }
+        .result.not-found { background: #f8d7da; color: #721c24; }
+        .stats {
+            margin-top: 20px;
+            text-align: center;
+            color: #888;
+            font-size: 0.85rem;
+        }
+        .date-list {
+            margin-top: 10px;
+            font-size: 0.9rem;
+        }
+        .date-item {
+            background: rgba(255,255,255,0.7);
+            padding: 5px 10px;
+            margin: 3px 0;
+            border-radius: 4px;
+        }
+        .loading {
+            display: none;
+            text-align: center;
+            margin-top: 10px;
+            color: #666;
+        }
+        .loading.show { display: block; }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>🎯 Damacai 4D</h1>
+        <p class="subtitle">Check if number won First Prize</p>
+
+        <input type="text" id="numberInput" maxlength="4" placeholder="0000">
+        <button id="checkBtn" onclick="checkNumber()">Check</button>
+
+        <div class="loading" id="loading">Searching database...</div>
+        <div class="result" id="result"></div>
+
+        <div class="stats">
+            Database: 3,383 historical draws (2006-2026)
+        </div>
+    </div>
+
+    <script>
+        function checkNumber() {
+            const num = document.getElementById('numberInput').value;
+            const resultDiv = document.getElementById('result');
+            const loadingDiv = document.getElementById('loading');
+            const btn = document.getElementById('checkBtn');
+            
+            // Show immediate feedback
+            resultDiv.className = 'result show';
+            resultDiv.style.background = '#fff3cd';
+            resultDiv.innerHTML = '<strong>⏳ Checking...</strong>';
+            
+            if (num.length !== 4) {
+                resultDiv.className = 'result not-found show';
+                resultDiv.innerHTML = '<strong>⚠️ Please enter 4 digits</strong>';
+                return;
+            }
+            
+            btn.disabled = true;
+
+            // Use the API
+            fetch('/api/check?number=' + num)
+                .then(function(response) {
+                    return response.json();
+                })
+                .then(function(data) {
+                    btn.disabled = false;
+                    
+                    if (data.found) {
+                        var html = '<strong>🎉 Number ' + num + ' FOUND!</strong>';
+                        html += '<div style="margin-top: 10px;">Won ' + data.count + ' time(s):</div>';
+                        html += '<div class="date-list">';
+                        for (var i = 0; i < data.dates.length; i++) {
+                            html += '<div class="date-item">📅 ' + formatDate(data.dates[i]) + '</div>';
+                        }
+                        html += '</div>';
+                        resultDiv.className = 'result found show';
+                        resultDiv.innerHTML = html;
+                    } else {
+                        resultDiv.className = 'result not-found show';
+                        resultDiv.innerHTML = '<strong>❌ Number ' + num + ' not found</strong><br><small>Not in database of 1,998 draws</small>';
+                    }
+                })
+                .catch(function(error) {
+                    btn.disabled = false;
+                    resultDiv.className = 'result not-found show';
+                    resultDiv.innerHTML = '<strong>❌ Error: ' + error.message + '</strong>';
+                });
+        }
+
+        function formatDate(dateStr) {
+            var d = new Date(dateStr);
+            return d.toLocaleDateString('en-MY', { weekday: 'short', year: 'numeric', month: 'short', day: 'numeric' });
+        }
+
+        // Allow Enter key
+        document.getElementById('numberInput').addEventListener('keypress', function(e) {
+            if (e.key === 'Enter') checkNumber();
+        });
+    </script>
+</body>
+</html>
