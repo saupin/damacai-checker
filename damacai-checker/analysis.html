@@ -103,6 +103,10 @@
     <div class="container">
         <a href="/" class="back-btn">← Back to Checker</a>
         
+        <button onclick="loadAnalysis()" style="background:#2a5298;color:white;padding:12px 24px;border-radius:8px;border:none;cursor:pointer;margin-bottom:10px;">
+            🔄 Refresh Analysis
+        </button>
+        
         <h1>🎰 Damacai Analysis</h1>
         
         <div class="suggestions">
@@ -126,21 +130,19 @@
         </div>
 
         <h2>🔥 Hot Numbers (Most Frequent)</h2>
+        <div id="hotTable">
         <table>
             <tr><th>Number</th><th>Times Won</th></tr>
-            <tr><td>2008</td><td>4x</td></tr>
-            <tr><td>4818</td><td>4x</td></tr>
-            <tr><td>5497</td><td>4x</td></tr>
-            <tr><td>6601</td><td>4x</td></tr>
-            <tr><td>0145</td><td>4x</td></tr>
+            <tr><td>Loading...</td><td></td></tr>
         </table>
+        </div>
 
-        <h2>📊 Pattern Insights</h2>
-        <ul>
-            <li>Last digit <strong>2 & 7</strong> are hottest (366 times each)</li>
-            <li>First digit <strong>4</strong> is most common</li>
-            <li><strong>85%</strong> of winning numbers have consecutive digits</li>
-            <li>Most sums between 10-30</li>
+        <h2>📊 Stats</h2>
+        <p id="statsInfo">Loading...</p>
+
+        <h2>📈 Pattern Insights</h2>
+        <ul id="patternsInfo">
+            <li>Loading...</li>
         </ul>
 
         <h2>❄️ Hot Digits</h2>
@@ -150,6 +152,34 @@
         <div class="disclaimer">
             ⚠️ <strong>Disclaimer:</strong> Lottery is random! This analysis is for entertainment purposes only. Good luck! 🍀
         </div>
+        
+        <script>
+        function loadAnalysis() {
+            fetch('/api/analysis')
+                .then(r => r.json())
+                .then(data => {
+                    // Update hot numbers
+                    let hotHtml = '<table><tr><th>Number</th><th>Times Won</th></tr>';
+                    data.hotNumbers.slice(0,10).forEach(n => {
+                        hotHtml += '<tr><td>' + n.number + '</td><td>' + n.count + 'x</td></tr>';
+                    });
+                    hotHtml += '</table>';
+                    document.getElementById('hotTable').innerHTML = hotHtml;
+                    
+                    // Update stats
+                    document.getElementById('statsInfo').innerHTML = 
+                        data.totalNumbers + ' numbers | ' + data.totalDraws + ' draws | Last: ' + data.lastDraw;
+                    
+                    // Update patterns
+                    document.getElementById('patternsInfo').innerHTML = 
+                        '<li>Last digit <strong>' + data.lastDigitHot.join(', ') + '</strong> are hottest</li>' +
+                        '<li>First digit <strong>' + data.firstDigitHot.join(', ') + '</strong> are hottest</li>' +
+                        '<li><strong>' + data.patterns.consecutive + '%</strong> have consecutive digits</li>' +
+                        '<li>Sums: <strong>' + data.patterns.sumUnder10 + '%</strong> under 10, <strong>' + data.patterns.sumOver30 + '%</strong> over 30</li>';
+                });
+        }
+        loadAnalysis();
+        </script>
     </div>
 </body>
 </html>
