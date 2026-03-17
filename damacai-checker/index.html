@@ -110,7 +110,7 @@
         </div>
         
         <a href="/analysis.html" class="stats" style="display:block;margin-top:10px;text-align:center;text-decoration:none;">
-            📊 View Analysis
+            View Analysis
         </a>
     </div>
 
@@ -120,7 +120,7 @@
             .then(r => r.json())
             .then(data => {
                 document.getElementById('stats').innerHTML = 
-                    '<strong>📊 Stats:</strong> ' + data.totalNumbers + ' numbers | ' + 
+                    '<strong>Stats:</strong> ' + data.totalNumbers + ' numbers | ' + 
                     data.totalDraws + ' draws | Last: ' + data.lastDraw;
             })
             .catch(() => {
