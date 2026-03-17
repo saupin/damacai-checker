@@ -101,7 +101,7 @@
 
         <div style="display:flex;gap:10px;">
             <input type="text" id="numberInput" maxlength="4" placeholder="0000" style="flex:1;">
-            <button id="clearBtn" onclick="document.getElementById('numberInput').value='';document.getElementById('numberInput').focus()" style="padding:15px 15px;border-radius:8px;border:1px solid #ddd;cursor:pointer;">C</button>
+            <button id="clearBtn" onclick="document.getElementById('numberInput').value=''" style="padding:15px 15px;border-radius:8px;border:1px solid #ddd;cursor:pointer;">C</button>
         </div>
         <button id="checkBtn" onclick="checkNumber()">Check</button>
 
@@ -118,9 +118,6 @@
     </div>
 
     <script>
-        // Set focus on page load
-        document.getElementById('numberInput').focus();
-        
         // Load stats on page load
         fetch('/api/stats')
             .then(r => r.json())
