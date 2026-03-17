@@ -100,6 +100,7 @@
         <p class="subtitle">Check if number won First Prize</p>
 
         <input type="text" id="numberInput" maxlength="4" placeholder="0000">
+        <button id="clearBtn" onclick="document.getElementById('numberInput').value=''" style="padding:5px 12px;border-radius:4px;border:1px solid #ddd;cursor:pointer;">C</button>
         <button id="checkBtn" onclick="checkNumber()">Check</button>
 
         <div class="loading" id="loading">Searching database...</div>
