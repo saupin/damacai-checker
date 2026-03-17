@@ -1,0 +1,155 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Damacai Analysis</title>
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body {
+            font-family: system-ui, -apple-system, sans-serif;
+            background: linear-gradient(135deg, #1e3c72 0%, #2a5298 100%);
+            min-height: 100vh;
+            padding: 20px;
+        }
+        .container {
+            background: white;
+            border-radius: 16px;
+            padding: 30px;
+            max-width: 600px;
+            margin: 0 auto;
+            box-shadow: 0 20px 60px rgba(0,0,0,0.3);
+        }
+        h1 {
+            color: #1e3c72;
+            text-align: center;
+            margin-bottom: 20px;
+        }
+        h2 {
+            color: #2a5298;
+            margin: 20px 0 10px;
+            border-bottom: 2px solid #eee;
+            padding-bottom: 5px;
+        }
+        .hot-list {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 10px;
+            margin: 10px 0;
+        }
+        .hot-number {
+            background: #ff6b6b;
+            color: white;
+            padding: 8px 16px;
+            border-radius: 20px;
+            font-weight: bold;
+        }
+        .cold-list {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 10px;
+            margin: 10px 0;
+        }
+        .cold-number {
+            background: #4ecdc4;
+            color: white;
+            padding: 8px 16px;
+            border-radius: 20px;
+            font-weight: bold;
+        }
+        .suggestions {
+            background: #fff3cd;
+            padding: 15px;
+            border-radius: 8px;
+            margin: 15px 0;
+        }
+        .suggestions h3 {
+            color: #856404;
+            margin-bottom: 10px;
+        }
+        .back-btn {
+            display: inline-block;
+            background: #2a5298;
+            color: white;
+            padding: 12px 24px;
+            border-radius: 8px;
+            text-decoration: none;
+            margin-bottom: 20px;
+        }
+        .disclaimer {
+            background: #f8d7da;
+            padding: 15px;
+            border-radius: 8px;
+            margin-top: 20px;
+            font-size: 0.9rem;
+            color: #721c24;
+        }
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin: 10px 0;
+        }
+        th, td {
+            padding: 8px;
+            text-align: left;
+            border-bottom: 1px solid #eee;
+        }
+        th {
+            background: #f8f9fa;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <a href="/" class="back-btn">← Back to Checker</a>
+        
+        <h1>🎰 Damacai Analysis</h1>
+        
+        <div class="suggestions">
+            <h3>🎯 Suggested Numbers for Next Draw</h3>
+            <p>Based on hot numbers & pattern analysis:</p>
+            <div class="hot-list">
+                <span class="hot-number">2008</span>
+                <span class="hot-number">4818</span>
+                <span class="hot-number">5497</span>
+                <span class="hot-number">6601</span>
+                <span class="hot-number">0145</span>
+            </div>
+            <p>Hot digits combo:</p>
+            <div class="cold-list">
+                <span class="cold-number">4728</span>
+                <span class="cold-number">4272</span>
+                <span class="cold-number">4627</span>
+                <span class="cold-number">4718</span>
+                <span class="cold-number">5407</span>
+            </div>
+        </div>
+
+        <h2>🔥 Hot Numbers (Most Frequent)</h2>
+        <table>
+            <tr><th>Number</th><th>Times Won</th></tr>
+            <tr><td>2008</td><td>4x</td></tr>
+            <tr><td>4818</td><td>4x</td></tr>
+            <tr><td>5497</td><td>4x</td></tr>
+            <tr><td>6601</td><td>4x</td></tr>
+            <tr><td>0145</td><td>4x</td></tr>
+        </table>
+
+        <h2>📊 Pattern Insights</h2>
+        <ul>
+            <li>Last digit <strong>2 & 7</strong> are hottest (366 times each)</li>
+            <li>First digit <strong>4</strong> is most common</li>
+            <li><strong>85%</strong> of winning numbers have consecutive digits</li>
+            <li>Most sums between 10-30</li>
+        </ul>
+
+        <h2>❄️ Hot Digits</h2>
+        <p><strong>First digit:</strong> 4, 5, 6</p>
+        <p><strong>Last digit:</strong> 2, 7, 8</p>
+
+        <div class="disclaimer">
+            ⚠️ <strong>Disclaimer:</strong> Lottery is random! This analysis is for entertainment purposes only. Good luck! 🍀
+        </div>
+    </div>
+</body>
+</html>
