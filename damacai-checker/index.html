@@ -105,12 +105,24 @@
         <div class="loading" id="loading">Searching database...</div>
         <div class="result" id="result"></div>
 
-        <div class="stats">
-            Database: 3,383 historical draws (2006-2026)
+        <div class="stats" id="stats">
+            Loading stats...
         </div>
     </div>
 
     <script>
+        // Load stats on page load
+        fetch('/api/stats')
+            .then(r => r.json())
+            .then(data => {
+                document.getElementById('stats').innerHTML = 
+                    '<strong>📊 Stats:</strong> ' + data.totalNumbers + ' numbers | ' + 
+                    data.totalDraws + ' draws | Last: ' + data.lastDraw;
+            })
+            .catch(() => {
+                document.getElementById('stats').innerHTML = '📊 Database loading...';
+            });
+
         function checkNumber() {
             const num = document.getElementById('numberInput').value;
             const resultDiv = document.getElementById('result');
