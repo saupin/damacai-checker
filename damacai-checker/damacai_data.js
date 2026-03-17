@@ -1,7 +1,11 @@
 // Damacai 4D Results - Scraped from 4dmoon.com
-// Last updated: 2026-03-15
+// Last updated: 2026-03-17
 
 const damacaiData = [
+    {
+        "date": "2026-03-15",
+        "number": "9872"
+    },
     {
         "date": "2026-03-14",
         "number": "1994"
