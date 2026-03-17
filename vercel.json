@@ -1,0 +1,5 @@
+{
+  "rewrites": [
+    { "source": "/api/(.*)", "destination": "/damacai-checker/api/$1" }
+  ]
+}
