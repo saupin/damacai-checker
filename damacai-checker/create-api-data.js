@@ -3,14 +3,26 @@ const fs = require('fs');
 // Read the historical data
 const jsonData = JSON.parse(fs.readFileSync('./damacai_historical.json', 'utf8'));
 
-// Group by number
+// Group by number - include ALL prizes
 const numberMap = {};
 jsonData.forEach(draw => {
-  const num = draw.first_prize;
-  if (!numberMap[num]) {
-    numberMap[num] = [];
-  }
-  numberMap[num].push(draw.date);
+  // Add all prize categories
+  const allNumbers = [
+    draw.first_prize,
+    draw.second_prize,
+    draw.third_prize,
+    ...(draw.starters || []),
+    ...(draw.consolation || [])
+  ];
+  
+  allNumbers.forEach(num => {
+    if (num) {
+      if (!numberMap[num]) {
+        numberMap[num] = [];
+      }
+      numberMap[num].push(draw.date);
+    }
+  });
 });
 
 // Create API data
