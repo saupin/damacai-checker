@@ -159,10 +159,28 @@
                     
                     if (data.found) {
                         var html = '<strong>🎉 Number ' + num + ' FOUND!</strong>';
-                        html += '<div style="margin-top: 10px;">Won ' + data.count + ' time(s):</div>';
+                        html += '<div style="margin-top: 10px;">Total: ' + data.total + ' win(s)</div>';
+                        
+                        // Show prize breakdown
+                        var prizes = data.prizes;
+                        var prizeList = [];
+                        if (prizes['1st'] > 0) prizeList.push('🥇 ' + prizes['1st'] + 'x 1st');
+                        if (prizes['2nd'] > 0) prizeList.push('🥈 ' + prizes['2nd'] + 'x 2nd');
+                        if (prizes['3rd'] > 0) prizeList.push('🥉 ' + prizes['3rd'] + 'x 3rd');
+                        if (prizes['Starter'] > 0) prizeList.push('⭐ ' + prizes['Starter'] + 'x Starter');
+                        if (prizes['Consolation'] > 0) prizeList.push('🎯 ' + prizes['Consolation'] + 'x Consolation');
+                        
+                        if (prizeList.length > 0) {
+                            html += '<div style="margin-top:5px;font-size:14px;">' + prizeList.join(' | ') + '</div>';
+                        }
+                        
                         html += '<div class="date-list">';
-                        for (var i = 0; i < data.dates.length; i++) {
-                            html += '<div class="date-item">📅 ' + formatDate(data.dates[i]) + '</div>';
+                        for (var i = 0; i < data.details.length; i++) {
+                            var prizeIcon = data.details[i].prize === '1st' ? '🥇' : 
+                                           data.details[i].prize === '2nd' ? '🥈' : 
+                                           data.details[i].prize === '3rd' ? '🥉' : 
+                                           data.details[i].prize === 'Starter' ? '⭐' : '🎯';
+                            html += '<div class="date-item">' + prizeIcon + ' ' + formatDate(data.details[i].date) + ' - ' + data.details[i].prize + '</div>';
                         }
                         html += '</div>';
                         resultDiv.className = 'result found show';
