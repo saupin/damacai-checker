@@ -198,8 +198,9 @@
         }
 
         function formatDate(dateStr) {
-            var d = new Date(dateStr);
-            return d.toLocaleDateString('en-MY', { weekday: 'short', year: 'numeric', month: 'short', day: 'numeric' });
+            // dateStr format: YYYY-MM-DD
+            var parts = dateStr.split('-');
+            return parts[2] + '-' + parts[1] + '-' + parts[0];
         }
 
         // Allow Enter key
