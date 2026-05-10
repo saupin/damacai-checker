@@ -1,0 +1,31 @@
+{
+  "numbers": [
+    {
+      "num": "1153",
+      "lotteries": [
+        "damacai",
+        "magnum",
+        "toto"
+      ],
+      "draws": 20
+    },
+    {
+      "num": "9163",
+      "lotteries": [
+        "damacai",
+        "magnum",
+        "toto"
+      ],
+      "draws": 20
+    },
+    {
+      "num": "5000-5999",
+      "lotteries": [
+        "damacai"
+      ],
+      "draws": 10,
+      "is_range": true
+    }
+  ],
+  "chat_id": "702447750"
+}

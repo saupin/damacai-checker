@@ -1,9 +1,82 @@
 /**
  * Damacai Draw Results Checker
- * Runs after draws to check results
+ * Stores user's 4D numbers and checks against latest draw
  */
 
 const https = require('https');
+const fs = require('fs');
+const path = require('path');
+
+const DATA_FILE = path.join(__dirname, 'my_numbers.json');
+
+// ============ NUMBER MANAGEMENT ============
+
+function loadNumbers() {
+    if (!fs.existsSync(DATA_FILE)) {
+        return [];
+    }
+    try {
+        const data = fs.readFileSync(DATA_FILE, 'utf8');
+        return JSON.parse(data).numbers || [];
+    } catch {
+        return [];
+    }
+}
+
+function saveNumbers(numbers) {
+    fs.writeFileSync(DATA_FILE, JSON.stringify({ numbers }, null, 2));
+}
+
+function addNumber(num) {
+    const numbers = loadNumbers();
+    if (numbers.length >= 10) {
+        console.log('❌ Maximum 10 numbers allowed!');
+        return false;
+    }
+    if (!/^\d{4}$/.test(num)) {
+        console.log('❌ Must be exactly 4 digits!');
+        return false;
+    }
+    if (numbers.includes(num)) {
+        console.log(`❌ ${num} already in your list!`);
+        return false;
+    }
+    numbers.push(num);
+    saveNumbers(numbers);
+    console.log(`✅ Added ${num} (${numbers.length}/10 numbers)`);
+    return true;
+}
+
+function removeNumber(num) {
+    const numbers = loadNumbers();
+    const idx = numbers.indexOf(num);
+    if (idx === -1) {
+        console.log(`❌ ${num} not in your list!`);
+        return false;
+    }
+    numbers.splice(idx, 1);
+    saveNumbers(numbers);
+    console.log(`🗑️ Removed ${num} (${numbers.length}/10 numbers)`);
+    return true;
+}
+
+function listNumbers() {
+    const numbers = loadNumbers();
+    if (numbers.length === 0) {
+        console.log('📝 No numbers saved yet!');
+    } else {
+        console.log(`\n📝 Your ${numbers.length}/10 numbers:`);
+        numbers.forEach((n, i) => console.log(`   ${i + 1}. ${n}`));
+    }
+    return numbers;
+}
+
+function clearNumbers() {
+    saveNumbers([]);
+    console.log('🗑️ All numbers cleared!');
+}
+
+// ============ FETCH RESULTS ============
 
 function fetch(url) {
     return new Promise((resolve, reject) => {
@@ -15,40 +88,7 @@ function fetch(url) {
     });
 }
 
-async function getLatestDrawFromMainPage() {
-    const url = 'https://www.4dmoon.com/';
-    console.log(`Checking main page: ${url}...`);
-    
-    try {
-        const html = await fetch(url);
-        
-        // Find Damacai section - look for the pattern on the main page
-        const damacaiMatch = html.match(/Damacai 1\+3D[\s\S]*?1st Prize[\s\S]*?(\d{4})[\s\S]*?2nd[\s\S]*?(\d{4})[\s\S]*?3rd[\s\S]*?(\d{4})/i);
-        
-        if (damacaiMatch) {
-            const today = new Date().toISOString().split('T')[0];
-            return {
-                date: today,
-                first: damacaiMatch[1],
-                second: damacaiMatch[2],
-                third: damacaiMatch[3],
-                source: 'main page'
-            };
-        }
-    } catch (e) {
-        console.log('Error checking main page:', e.message);
-    }
-    return null;
-}
-
 async function getLatestDraw() {
-    // First try main page for today's results
-    const mainPageResult = await getLatestDrawFromMainPage();
-    if (mainPageResult) {
-        return mainPageResult;
-    }
-    
-    // Fallback: try last 7 days (draws are Wed, Sat, Sun, sometimes Tue)
     for (let i = 0; i < 7; i++) {
         const d = new Date();
         d.setDate(d.getDate() - i);
@@ -59,7 +99,6 @@ async function getLatestDraw() {
         try {
             const html = await fetch(url);
             
-            // Find Damacai section
             const match = html.match(/Damacai 1\+3D([\s\S]*?)(?=Magnum|SportsToto|$)/i);
             if (!match) continue;
             
@@ -82,28 +121,45 @@ async function getLatestDraw() {
     return null;
 }
 
-// Our suggested numbers
-const suggestedNumbers = [
-    '0500', '5755', '5005', '7707', '0750',
-    '0421', '8458', '2001', '8441', '4777',
-    '2457', '2277', '1529', '7545', '7452'
-];
+// ============ SIMULATION ============
 
-async function main() {
-    console.log('=== Damacai Results Checker ===\n');
+function simulateDraw() {
+    const pad = (n) => String(n).padStart(4, '0');
     
-    const result = await getLatestDraw();
+    // Generate random but realistic 4D numbers
+    const simulate = () => pad(Math.floor(Math.random() * 10000));
+    
+    return {
+        date: new Date().toISOString().split('T')[0],
+        first: simulate(),
+        second: simulate(),
+        third: simulate(),
+        source: 'SIMULATED'
+    };
+}
+
+// ============ MAIN COMMANDS ============
+
+async function checkResults(simulated = false) {
+    const numbers = loadNumbers();
+    if (numbers.length === 0) {
+        console.log('📝 No numbers saved! Add numbers first:');
+        console.log('   node check-draw.js add 1234');
+        return;
+    }
+    
+    console.log(simulated ? '\n=== SIMULATED DRAW TEST ===' : '\n=== Damacai Results Checker ===');
+    listNumbers();
+    
+    const result = simulated ? simulateDraw() : await getLatestDraw();
     
     if (result) {
-        console.log(`📅 Latest Draw: ${result.date} (from ${result.source || 'unknown'})`);
-        console.log(`🎯 1st Prize: ${result.first}`);
-        console.log(`🥈 2nd: ${result.second}`);
-        console.log(`🥉 3rd: ${result.third}`);
-        
-        console.log('\n=== Checking your numbers ===');
+        console.log(`\n📅 Draw: ${result.date} (${result.source})`);
+        console.log(`🎯 1st: ${result.first} | 2nd: ${result.second} | 3rd: ${result.third}`);
+        console.log('\n=== Your Results ===');
         
         let matches = [];
-        suggestedNumbers.forEach(num => {
+        numbers.forEach(num => {
             if (num === result.first) {
                 console.log(`🎉 FIRST PRIZE: ${num} !!!`);
                 matches.push({ num, prize: '1ST' });
@@ -117,16 +173,30 @@ async function main() {
         });
         
         if (matches.length === 0) {
-            console.log('\n❌ No matches this time. Better luck next draw!');
-        }
-        
-        // Output for cron
-        if (matches.length > 0) {
+            console.log('❌ No matches.');
+        } else {
             console.log('\n🎊 WON: ' + JSON.stringify(matches));
         }
     } else {
-        console.log('Could not find latest draw results');
+        console.log('Could not find draw results.');
     }
 }
 
-main().catch(console.error);
+// ============ CLI ============
+
+const args = process.argv.slice(2);
+const cmd = args[0];
+
+if (cmd === 'add' && args[1]) {
+    addNumber(args[1]);
+} else if (cmd === 'remove' && args[1]) {
+    removeNumber(args[1]);
+} else if (cmd === 'list') {
+    listNumbers();
+} else if (cmd === 'clear') {
+    clearNumbers();
+} else if (cmd === 'simulate') {
+    checkResults(true).catch(console.error);
+} else {
+    checkResults(false).catch(console.error);
+}

@@ -60,16 +60,29 @@ async function scrapePastResult(dateStr) {
         
         const section = damacaiMatch[1];
         
-        // Extract the first 3 four-digit numbers (1st, 2nd, 3rd prizes)
-        const numbers = section.match(/>(\d{4})</g);
+        // Find ALL 4-digit numbers in the section
+        const allNumbers = section.match(/(\d{4})/g);
         
-        if (numbers && numbers.length >= 3) {
-            const prizes = numbers.slice(0, 3).map(n => n.replace(/[><]/g, ''));
+        if (!allNumbers || allNumbers.length < 23) return null;
+        
+        // Filter to unique 4-digit sequences and take first 23
+        const filtered = [];
+        const seen = new Set();
+        for (const n of allNumbers) {
+            if (!seen.has(n) && filtered.length < 25) {
+                seen.add(n);
+                filtered.push(n);
+            }
+        }
+        
+        if (filtered.length >= 23) {
             return {
                 date: dateStr,
-                first_prize: prizes[0],
-                second_prize: prizes[1],
-                third_prize: prizes[2]
+                first_prize: filtered[0],
+                second_prize: filtered[1],
+                third_prize: filtered[2],
+                starters: filtered.slice(3, 13),
+                consolation: filtered.slice(13, 23)
             };
         }
         
@@ -87,7 +100,7 @@ function sleep(ms) {
     return new Promise(resolve => setTimeout(resolve, ms));
 }
 
-async function scrapeRange(days = 30) {
+async function scrapeRange(days = 7300) { // ~20 years
     const results = [];
     const today = new Date();
     
@@ -148,8 +161,8 @@ async function main() {
     console.log('='.repeat(50));
     console.log();
     
-    // Scrape past results
-    const results = await scrapeRange(60);
+    // Scrape past results - 2025 only (~365 days)
+    const results = await scrapeRange(365);
     
     if (results.length > 0) {
         saveResults(results);
