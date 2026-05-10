@@ -9,6 +9,7 @@ import nest_asyncio
 nest_asyncio.apply()
 from telegram import Bot, Update
 from telegram.ext import Application, CommandHandler, MessageHandler, filters, ContextTypes
+from flask import Flask, request, jsonify
 
 WORKSPACE = r'C:\Users\samul\.openclaw\workspace\damacai-checker'
 sys.path.insert(0, WORKSPACE)
@@ -19,8 +20,71 @@ from magnum_scraper import load_existing_data as load_magnum, check_number as ch
 from shared_scraper import scrape_all, scrape_damacai_latest, scrape_toto_latest, scrape_magnum_latest, close_browser
 from collections import Counter
 import json
+import asyncio
+from flask import Flask, request, jsonify
 
 BOT_TOKEN = '8752373556:AAG0ucYHgQ7pchVoHuR8K9eOtxcbXqQPkos'
+
+# Flask API for PWA to add numbers
+app = Flask(__name__)
+
+@app.route('/api/add-number', methods=['POST'])
+def api_add_number():
+    data = request.json
+    num = data.get('number')
+    lottery = data.get('lottery', 'damacai')
+    draws = data.get('draws', 5)
+    
+    if not num or len(num) != 4 or not num.isdigit():
+        return jsonify({'success': False, 'error': 'Invalid number'}), 400
+    
+    config_path = os.path.join(WORKSPACE, 'my_numbers.json')
+    with open(config_path, 'r') as f:
+        config = json.load(f)
+    
+    # Check if already exists
+    for n in config['numbers']:
+        if n['num'] == num:
+            return jsonify({'success': False, 'error': 'Number already exists'}), 400
+    
+    # Map lottery
+    lot_map = {'damacai': 'damacai', 'toto': 'toto', 'magnum': 'magnum'}
+    lotteries = [lot_map.get(lottery, 'damacai')]
+    
+    config['numbers'].append({
+        'num': num,
+        'lotteries': lotteries,
+        'draws': draws
+    })
+    
+    with open(config_path, 'w') as f:
+        json.dump(config, f, indent=2)
+    
+    return jsonify({'success': True, 'number': num, 'lottery': lottery, 'draws': draws})
+
+@app.route('/api/mynumbers', methods=['GET'])
+def api_mynumbers():
+    config_path = os.path.join(WORKSPACE, 'my_numbers.json')
+    with open(config_path, 'r') as f:
+        config = json.load(f)
+    return jsonify(config['numbers'])
+
+@app.route('/api/remove-number', methods=['POST'])
+def api_remove_number():
+    data = request.json
+    num = data.get('number')
+    
+    config_path = os.path.join(WORKSPACE, 'my_numbers.json')
+    with open(config_path, 'r') as f:
+        config = json.load(f)
+    
+    original = len(config['numbers'])
+    config['numbers'] = [n for n in config['numbers'] if n['num'] != num]
+    
+    with open(config_path, 'w') as f:
+        json.dump(config, f, indent=2)
+    
+    return jsonify({'success': len(config['numbers']) < original})
 
 # Prediction data (from analysis of 2000+ draws per lottery)
 PREDICTION_DATA = {
@@ -705,6 +769,13 @@ async def main():
     app.add_handler(MessageHandler(filters.TEXT & ~filters.COMMAND, handle_text))
     
     print("Bot is running! Press Ctrl+C to stop.")
+    
+    # Run Flask API in separate thread
+    import threading
+    flask_thread = threading.Thread(target=lambda: app.run(port=5000, debug=False, use_reloader=False), daemon=True)
+    flask_thread.start()
+    print("API server running on http://localhost:5000")
+    
     await app.run_polling(drop_pending_updates=True)
 
 if __name__ == "__main__":

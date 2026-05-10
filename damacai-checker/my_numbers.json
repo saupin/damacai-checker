@@ -25,6 +25,27 @@
       ],
       "draws": 10,
       "is_range": true
+    },
+    {
+      "num": "1415",
+      "lotteries": [
+        "toto"
+      ],
+      "draws": 3
+    },
+    {
+      "num": "6626",
+      "lotteries": [
+        "magnum"
+      ],
+      "draws": 3
+    },
+    {
+      "num": "5097",
+      "lotteries": [
+        "damacai"
+      ],
+      "draws": 3
     }
   ],
   "chat_id": "702447750"
