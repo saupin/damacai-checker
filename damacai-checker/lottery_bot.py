@@ -26,9 +26,9 @@ from flask import Flask, request, jsonify
 BOT_TOKEN = '8752373556:AAG0ucYHgQ7pchVoHuR8K9eOtxcbXqQPkos'
 
 # Flask API for PWA to add numbers
-app = Flask(__name__)
+flask_app = Flask(__name__)
 
-@app.route('/api/add-number', methods=['POST'])
+@flask_app.route('/api/add-number', methods=['POST'])
 def api_add_number():
     data = request.json
     num = data.get('number')
@@ -62,14 +62,14 @@ def api_add_number():
     
     return jsonify({'success': True, 'number': num, 'lottery': lottery, 'draws': draws})
 
-@app.route('/api/mynumbers', methods=['GET'])
+@flask_app.route('/api/mynumbers', methods=['GET'])
 def api_mynumbers():
     config_path = os.path.join(WORKSPACE, 'my_numbers.json')
     with open(config_path, 'r') as f:
         config = json.load(f)
     return jsonify(config['numbers'])
 
-@app.route('/api/remove-number', methods=['POST'])
+@flask_app.route('/api/remove-number', methods=['POST'])
 def api_remove_number():
     data = request.json
     num = data.get('number')
@@ -772,7 +772,7 @@ async def main():
     
     # Run Flask API in separate thread
     import threading
-    flask_thread = threading.Thread(target=lambda: app.run(port=5000, debug=False, use_reloader=False), daemon=True)
+    flask_thread = threading.Thread(target=lambda: flask_app.run(port=5000, debug=False, use_reloader=False, host='0.0.0.0'), daemon=True)
     flask_thread.start()
     print("API server running on http://localhost:5000")
     
