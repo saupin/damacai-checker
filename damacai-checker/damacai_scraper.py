@@ -41,15 +41,13 @@ def parse_damacai(html, date):
     next_pos = html.find('Magnum 4D', damacai_pos)
     section = html[damacai_pos:next_pos] if next_pos > 0 else html[damacai_pos:damacai_pos+3000]
     
-    # Extract by div IDs: DP1, DP2, DP3
-    m1 = re.search(r'id="DP1">(\d{4})<', section)
-    m2 = re.search(r'id="DP2">(\d{4})<', section)
-    m3 = re.search(r'id="DP3">(\d{4})<', section)
+    # Extract first 3 numbers (1st, 2nd, 3rd prizes) - they appear as >XXXX< in order
+    numbers = re.findall(r'>(\d{4})<', section)
     
-    if m1 and m2 and m3:
-        results['damacai']['1st'] = m1.group(1)
-        results['damacai']['2nd'] = m2.group(1)
-        results['damacai']['3rd'] = m3.group(1)
+    if len(numbers) >= 3:
+        results['damacai']['1st'] = numbers[0]
+        results['damacai']['2nd'] = numbers[1]
+        results['damacai']['3rd'] = numbers[2]
         return results
     
     return None

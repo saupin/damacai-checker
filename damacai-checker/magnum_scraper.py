@@ -41,15 +41,13 @@ def parse_magnum(html, date):
         toto_start = html.find('SportsToto 4D', magnum_pos)
         section = html[magnum_pos:toto_start] if toto_start > 0 else html[magnum_pos:magnum_pos+3000]
         
-        # Extract by div IDs: MP1, MP2, MP3
-        m1 = re.search(r'id="MP1">(\d{4})<', section)
-        m2 = re.search(r'id="MP2">(\d{4})<', section)
-        m3 = re.search(r'id="MP3">(\d{4})<', section)
+        # Extract first 3 numbers (1st, 2nd, 3rd prizes) - they appear as >XXXX< in order
+        numbers = re.findall(r'>(\d{4})<', section)
         
-        if m1 and m2 and m3:
-            results['magnum']['1st'] = m1.group(1)
-            results['magnum']['2nd'] = m2.group(1)
-            results['magnum']['3rd'] = m3.group(1)
+        if len(numbers) >= 3:
+            results['magnum']['1st'] = numbers[0]
+            results['magnum']['2nd'] = numbers[1]
+            results['magnum']['3rd'] = numbers[2]
             return results
     
     return None

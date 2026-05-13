@@ -1,10 +1,34 @@
 // Magnum 4D Full Results
-// Last updated: 2026-05-06T22:22:34.493462
-// Total draws: 2055
+// Last updated: 2026-05-13T22:20:28.187098
+// Total draws: 2058
 
 const magnum_data = {
-  "last_updated": "2026-05-06T22:22:34.493462",
+  "last_updated": "2026-05-13T22:20:28.187098",
   "draws": [
+    {
+      "date": "2026-05-13",
+      "magnum": {
+        "1st": "6449",
+        "2nd": "6194",
+        "3rd": "8562"
+      }
+    },
+    {
+      "date": "2026-05-10",
+      "magnum": {
+        "1st": "4502",
+        "2nd": "2128",
+        "3rd": "2501"
+      }
+    },
+    {
+      "date": "2026-05-09",
+      "magnum": {
+        "1st": "4965",
+        "2nd": "2753",
+        "3rd": "7281"
+      }
+    },
     {
       "date": "2026-05-06",
       "magnum": {

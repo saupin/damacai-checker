@@ -1,10 +1,34 @@
 // Damacai 1+3D Full Results
-// Last updated: 2026-05-06T22:22:34.167944
-// Total draws: 2029
+// Last updated: 2026-05-13T22:18:34.050151
+// Total draws: 2032
 
 const damacai_data = {
-  "last_updated": "2026-05-06T22:22:34.167944",
+  "last_updated": "2026-05-13T22:18:34.050151",
   "draws": [
+    {
+      "date": "2026-05-13",
+      "damacai": {
+        "1st": "1272",
+        "2nd": "1956",
+        "3rd": "1905"
+      }
+    },
+    {
+      "date": "2026-05-10",
+      "damacai": {
+        "1st": "2523",
+        "2nd": "5962",
+        "3rd": "3678"
+      }
+    },
+    {
+      "date": "2026-05-09",
+      "damacai": {
+        "1st": "2786",
+        "2nd": "3024",
+        "3rd": "6046"
+      }
+    },
     {
       "date": "2026-05-06",
       "damacai": {

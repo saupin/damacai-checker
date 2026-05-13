@@ -41,15 +41,13 @@ def parse_toto(html, date):
     next_pos = html.find('SportsToto Fireball', toto_pos)
     section = html[toto_pos:next_pos] if next_pos > 0 else html[toto_pos:toto_pos+3000]
     
-    # Extract by div IDs: TP1, TP2, TP3
-    m1 = re.search(r'id="TP1">(\d{4})<', section)
-    m2 = re.search(r'id="TP2">(\d{4})<', section)
-    m3 = re.search(r'id="TP3">(\d{4})<', section)
+    # Extract first 3 numbers (1st, 2nd, 3rd prizes) - they appear as >XXXX< in order
+    numbers = re.findall(r'>(\d{4})<', section)
     
-    if m1 and m2 and m3:
-        results['toto']['1st'] = m1.group(1)
-        results['toto']['2nd'] = m2.group(1)
-        results['toto']['3rd'] = m3.group(1)
+    if len(numbers) >= 3:
+        results['toto']['1st'] = numbers[0]
+        results['toto']['2nd'] = numbers[1]
+        results['toto']['3rd'] = numbers[2]
         return results
     
     return None
